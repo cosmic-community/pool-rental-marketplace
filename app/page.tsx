@@ -6,6 +6,15 @@ import CategoryCard from '@/components/CategoryCard'
 import ReviewCard from '@/components/ReviewCard'
 import type { Review } from '@/types'
 
+// Changed: Helper to extract numeric rating from select-dropdown object or number
+function getRatingNumber(rating: unknown): number {
+  if (typeof rating === 'number') return rating
+  if (typeof rating === 'object' && rating !== null && 'key' in rating) {
+    return Number((rating as { key: string }).key) || 0
+  }
+  return 0
+}
+
 export default async function HomePage() {
   const [pools, hosts, categories, reviews] = await Promise.all([
     getPools(),
@@ -19,13 +28,15 @@ export default async function HomePage() {
   for (const review of reviews) {
     const poolId = review.metadata?.pool?.id
     if (!poolId) continue
+    // Changed: extract numeric rating from select-dropdown object
+    const ratingNum = getRatingNumber(review.metadata?.rating)
     const existing = ratingMap[poolId]
     if (existing) {
-      existing.total += review.metadata?.rating ?? 0
+      existing.total += ratingNum
       existing.count += 1
     } else {
       ratingMap[poolId] = {
-        total: review.metadata?.rating ?? 0,
+        total: ratingNum,
         count: 1,
       }
     }
@@ -68,7 +79,7 @@ export default async function HomePage() {
           className="absolute inset-0 opacity-30"
           style={{
             backgroundImage:
-              'url(https://imgix.cosmicjs.com/https://imgix.cosmicjs.com/70b33870-1742-11f1-95d6-291bc45ac05c-autopilot-photo-1499793983690-e29da59ef1c2-1772570954890.jpeg?w=1920&h=900&fit=crop&auto=format,compress)',
+              'url(https://imgix.cosmicjs.com/70b33870-1742-11f1-95d6-291bc45ac05c-autopilot-photo-1499793983690-e29da59ef1c2-1772570954890.jpeg?w=1920&h=900&fit=crop&auto=format,compress)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}

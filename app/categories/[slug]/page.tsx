@@ -21,6 +21,15 @@ export async function generateMetadata({ params }: CategoryDetailPageProps): Pro
   }
 }
 
+// Changed: Helper to extract numeric rating from select-dropdown object or number
+function getRatingNumber(rating: unknown): number {
+  if (typeof rating === 'number') return rating
+  if (typeof rating === 'object' && rating !== null && 'key' in rating) {
+    return Number((rating as { key: string }).key) || 0
+  }
+  return 0
+}
+
 export default async function CategoryDetailPage({ params }: CategoryDetailPageProps) {
   const { slug } = await params
   const category = await getCategoryBySlug(slug)
@@ -39,13 +48,15 @@ export default async function CategoryDetailPage({ params }: CategoryDetailPageP
   for (const review of reviews) {
     const poolId = review.metadata?.pool?.id
     if (!poolId) continue
+    // Changed: extract numeric rating from select-dropdown object
+    const ratingNum = getRatingNumber(review.metadata?.rating)
     const existing = ratingMap[poolId]
     if (existing) {
-      existing.total += review.metadata?.rating ?? 0
+      existing.total += ratingNum
       existing.count += 1
     } else {
       ratingMap[poolId] = {
-        total: review.metadata?.rating ?? 0,
+        total: ratingNum,
         count: 1,
       }
     }

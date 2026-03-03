@@ -6,9 +6,19 @@ interface ReviewCardProps {
   showPoolName?: boolean
 }
 
+// Changed: Helper to extract numeric rating from select-dropdown object or number
+function getRatingNumber(rating: unknown): number {
+  if (typeof rating === 'number') return rating
+  if (typeof rating === 'object' && rating !== null && 'key' in rating) {
+    return Number((rating as { key: string }).key) || 0
+  }
+  return 0
+}
+
 export default function ReviewCard({ review, showPoolName = false }: ReviewCardProps) {
   const reviewerName = review.metadata?.reviewer_name || 'Anonymous'
-  const rating = review.metadata?.rating ?? 0
+  // Changed: rating is a select-dropdown returning {key, value}, extract numeric value
+  const rating = getRatingNumber(review.metadata?.rating)
   const comment = review.metadata?.comment
   const date = review.metadata?.date
   const poolTitle = review.metadata?.pool?.title

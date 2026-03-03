@@ -21,6 +21,15 @@ export async function generateMetadata({ params }: PoolDetailPageProps): Promise
   }
 }
 
+// Changed: Helper to extract numeric rating from select-dropdown object or number
+function getRatingNumber(rating: unknown): number {
+  if (typeof rating === 'number') return rating
+  if (typeof rating === 'object' && rating !== null && 'key' in rating) {
+    return Number((rating as { key: string }).key) || 0
+  }
+  return 0
+}
+
 export default async function PoolDetailPage({ params }: PoolDetailPageProps) {
   const { slug } = await params
   const pool = await getPoolBySlug(slug)
@@ -33,15 +42,18 @@ export default async function PoolDetailPage({ params }: PoolDetailPageProps) {
 
   const avgRating =
     reviews.length > 0
-      ? reviews.reduce((sum, r) => sum + (r.metadata?.rating ?? 0), 0) / reviews.length
+      ? reviews.reduce((sum, r) => sum + getRatingNumber(r.metadata?.rating), 0) / reviews.length
       : 0
 
   const imageUrl = pool.metadata?.featured_image?.imgix_url
   const gallery = pool.metadata?.gallery || []
   const host = pool.metadata?.host
   const category = pool.metadata?.category
+  // Changed: amenities is a check-boxes array, not a comma-separated string
   const amenities = pool.metadata?.amenities
-  const amenityList = amenities
+  const amenityList: string[] = Array.isArray(amenities)
+    ? (amenities as string[]).filter(Boolean)
+    : typeof amenities === 'string' && amenities
     ? amenities.split(',').map((a: string) => a.trim()).filter(Boolean)
     : []
 
