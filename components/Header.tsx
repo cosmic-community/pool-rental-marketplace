@@ -31,6 +31,12 @@ export default function Header() {
             >
               Categories
             </Link>
+            <Link
+              href="/contact"
+              className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-pool-600 hover:bg-pool-50 rounded-lg transition-all"
+            >
+              Contact
+            </Link>
           </nav>
 
           <div className="flex items-center gap-3">
@@ -72,6 +78,9 @@ function MobileMenu() {
         </Link>
         <Link href="/categories" className="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-pool-50 hover:text-pool-600 transition-colors">
           🏷️ Categories
+        </Link>
+        <Link href="/contact" className="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-pool-50 hover:text-pool-600 transition-colors">
+          ✉️ Contact
         </Link>
       </div>
     </details>

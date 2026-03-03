@@ -43,7 +43,9 @@ export default function Footer() {
             <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Support</h3>
             <ul className="space-y-2.5">
               <li>
-                <span className="text-sm text-gray-400">Help Center</span>
+                <Link href="/contact" className="text-sm hover:text-pool-400 transition-colors">
+                  Contact Us
+                </Link>
               </li>
               <li>
                 <span className="text-sm text-gray-400">Safety Info</span>
